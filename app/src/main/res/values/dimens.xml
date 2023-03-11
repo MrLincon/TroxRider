@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="sidePadding">10dp</dimen>
+    <dimen name="topPadding">8dp</dimen>
+    <dimen name="bottomPadding">16dp</dimen>
+    <dimen name="leftPadding">10dp</dimen>
+    <dimen name="rightPadding">10dp</dimen>
+</resources>
