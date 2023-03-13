@@ -187,4 +187,10 @@
     <string name="work_location">Work Location</string>
     <string name="full_name">Full Name</string>
     <string name="identity_proof">Identity Proof</string>
+    <string name="select_your_city">Select your city</string>
+    <string name="select_identity_type">Select identity type</string>
+    <string name="national_id">National ID</string>
+    <string name="passport">Passport</string>
+    <string name="history">History</string>
+    <string name="select_your_state">Select your state</string>
 </resources>

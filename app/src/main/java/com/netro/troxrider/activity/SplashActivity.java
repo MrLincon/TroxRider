@@ -40,13 +40,13 @@ public class SplashActivity extends AppCompatActivity {
 
                     if (FirebaseAuth.getInstance().getCurrentUser()!=null){
 
-                        FirebaseFirestore.getInstance().collection("userDetails").document(FirebaseAuth.getInstance().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        FirebaseFirestore.getInstance().collection("riderDetails").document(FirebaseAuth.getInstance().getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 if (documentSnapshot.exists()){
                                     String userType = documentSnapshot.getString("user_type");
                                     if (userType.equals("")){
-                                        startActivity(new Intent(SplashActivity.this, SignUpActivity.class));
+                                        startActivity(new Intent(SplashActivity.this, AccountSetupActivity.class));
                                         finish();
                                     }else {
                                         startActivity(new Intent(SplashActivity.this, MainActivity.class));

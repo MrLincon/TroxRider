@@ -193,8 +193,8 @@ public class SignUpActivity extends AppCompatActivity {
 
                                                                     Map<String, String> userMap = new HashMap<>();
 
-                                                                    userMap.put("user_email", email);
-                                                                    userMap.put("used_id", userID);
+                                                                    userMap.put("rider_email", email);
+                                                                    userMap.put("rider_id", userID);
                                                                     userMap.put("user_type", "");
 
                                                                     document_ref.set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {

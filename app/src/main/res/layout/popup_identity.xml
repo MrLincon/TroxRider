@@ -29,12 +29,12 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 android:fontFamily="@font/ubuntu_bold"
-                android:text="@string/select_your_gender"
+                android:text="@string/select_identity_type"
                 android:textColor="@color/colorBlackHighEmp"
                 android:textSize="20sp" />
 
             <RelativeLayout
-                android:id="@+id/male"
+                android:id="@+id/nid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -55,17 +55,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/ubuntu_medium"
-                    android:text="@string/male"
+                    android:text="@string/national_id"
                     android:layout_marginLeft="16dp"
                     android:textColor="@color/colorBlackHighEmp"
-                    android:textSize="14sp"></TextView>
+                    android:textSize="14sp" />
 
 
 
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/female"
+                android:id="@+id/passport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -87,10 +87,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/ubuntu_medium"
-                    android:text="@string/female"
+                    android:text="@string/passport"
                     android:layout_marginLeft="16dp"
                     android:textColor="@color/colorBlackHighEmp"
-                    android:textSize="14sp"></TextView>
+                    android:textSize="14sp" />
 
 
 

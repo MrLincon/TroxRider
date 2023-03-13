@@ -72,7 +72,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     emailLayout.setError("Please enter a valid email");
                     tools.makeSnack(main, "Please enter a valid email");
                     return;
-                }else {
+                }
+                else {
                     FirebaseAuth.getInstance().sendPasswordResetEmail(Email)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override

@@ -1,5 +1,6 @@
 package com.netro.troxrider.authentication;
 
+import android.accounts.Account;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.netro.troxrider.R;
+import com.netro.troxrider.activity.AccountSetupActivity;
 import com.netro.troxrider.activity.MainActivity;
 import com.netro.troxrider.util.Tools;
 
@@ -104,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
 
         //google auth init
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("144764896073-sn4civavo5la0m0870glis3mggqrfauj.apps.googleusercontent.com")
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
@@ -246,7 +248,7 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser currentUser = mAuth.getCurrentUser();
                             String email = currentUser.getEmail();
 
-                            document_ref = db.collection("userDetails").document(userID);
+                            document_ref = db.collection("riderDetails").document(userID);
 
 
                             document_ref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -255,8 +257,8 @@ public class LoginActivity extends AppCompatActivity {
 
                                     Map<String, Object> userMap = new HashMap<>();
 
-                                    userMap.put("user_email", email);
-                                    userMap.put("used_id", userID);
+                                    userMap.put("rider_email", email);
+                                    userMap.put("rider_id", userID);
                                     userMap.put("user_type", "");
 
                                     if (documentSnapshot.exists()) {
@@ -308,14 +310,14 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             userID = mAuth.getUid();
-            FirebaseFirestore.getInstance().collection("userDetails").document(userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            FirebaseFirestore.getInstance().collection("riderDetails").document(userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()){
                         String userType = documentSnapshot.getString("user_type");
 
                         if (userType.equals("")){
-                            startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
+                            startActivity(new Intent(LoginActivity.this, AccountSetupActivity.class));
                             finish();
                         }else {
                             tools.loading(popup, false);
