@@ -78,7 +78,10 @@ public class MainActivity extends AppCompatActivity {
                     String user_image = documentSnapshot.getString("rider_image");
                     String user_name = documentSnapshot.getString("rider_name");
 
-                    Glide.with(MainActivity.this).load(user_image).into(userImage);
+                    if (user_image!=null){
+                        Glide.with(MainActivity.this).load(user_image).into(userImage);
+                    }
+
                     userName.setText(user_name);
 
 
@@ -110,9 +113,13 @@ public class MainActivity extends AppCompatActivity {
                 switch (i){
                     case R.id.nav_home:
                         break;
-
+s
                     case R.id.nav_history:
                         startActivity(new Intent(MainActivity.this, HistoryActivity.class));
+                        break;
+
+                    case R.id.nav_assigned:
+                        startActivity(new Intent(MainActivity.this, AssignedActivity.class));
                         break;
 
                     case R.id.nav_profile:

@@ -140,7 +140,11 @@ public class EditProfileActivity extends AppCompatActivity {
                 String user_address = documentSnapshot.getString("rider_address");
                 String user_work_location = documentSnapshot.getString("rider_work_location");
 
-                Glide.with(EditProfileActivity.this).load(rider_image).into(riderImage);
+
+                if (rider_image!=null){
+                    Glide.with(EditProfileActivity.this).load(rider_image).into(riderImage);
+                }
+
                 name.setText(user_name);
                 email.setText(user_email);
                 dob.setText(user_dob);

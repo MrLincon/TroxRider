@@ -737,7 +737,7 @@ public class AccountSetupActivity extends AppCompatActivity {
         index++;
 
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("imageLink", FieldValue.arrayUnion(url));
+        hashMap.put("rider_documents", FieldValue.arrayUnion(url));
 
 
         FirebaseFirestore.getInstance().collection("riderDetails").document(userID).update(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {

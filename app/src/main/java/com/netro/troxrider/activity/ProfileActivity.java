@@ -80,7 +80,10 @@ public class ProfileActivity extends AppCompatActivity {
                     String user_email = documentSnapshot.getString("rider_email");
                     String user_type = documentSnapshot.getString("user_type");
 
-                    Glide.with(ProfileActivity.this).load(rider_image).into(userImage);
+
+                    if (rider_image!=null){
+                        Glide.with(ProfileActivity.this).load(rider_image).into(userImage);
+                    }
                     userName.setText(user_name);
                     userEmail.setText(user_email);
 

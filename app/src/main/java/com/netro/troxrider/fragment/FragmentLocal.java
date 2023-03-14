@@ -3,6 +3,7 @@ package com.netro.troxrider.fragment;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +43,7 @@ public class FragmentLocal extends Fragment {
     private FirebaseFirestore db;
     private CollectionReference localData;
 
-    private String Country, State, City;
-
+    String Country, State, City, Status;
 
     private OrderDataAdapter adapter;
 
@@ -66,34 +66,42 @@ public class FragmentLocal extends Fragment {
 
         tools = new Tools();
 
-
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getUid();
         db = FirebaseFirestore.getInstance();
 
-
-        db.collection("rider_details").document(userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.collection("riderDetails").document(userID).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()){
+                if (documentSnapshot.exists()) {
+                    Status = documentSnapshot.getString("rider_status");
                     Country = documentSnapshot.getString("rider_country");
                     State = documentSnapshot.getString("rider_state");
-                    City = documentSnapshot.getString("rider_city");
+                    City = documentSnapshot.getString("rider_work_location");
 
+                    if (Status.equals("Cancelled")) {
+                        loadData(Country, State, City);
+                    }else {
+
+                    }
 
                 }
             }
         });
 
 
+        return view;
+    }
+
+    private void loadData(String country, String state, String city) {
+
         localData = db.collection("orders");
 
-tools.logMessage("sdsdsd",Country);
 
-        Query query = localData.whereEqualTo("order_status", "Delivered").orderBy("timestamp", Query.Direction.ASCENDING);
+        Query query = localData.whereEqualTo("order_status", "Approved").whereEqualTo("sender_city",city).orderBy("timestamp", Query.Direction.ASCENDING);
 
         PagedList.Config config = new PagedList.Config.Builder()
-                .setInitialLoadSizeHint(10)
+                .setInitialLoadSizeHint(15)
                 .setPageSize(15)
                 .build();
 
@@ -130,7 +138,7 @@ tools.logMessage("sdsdsd",Country);
             }
         });
 
-
-        return view;
     }
+
+
 }
