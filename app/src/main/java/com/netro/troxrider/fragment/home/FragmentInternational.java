@@ -1,4 +1,4 @@
-package com.netro.troxrider.fragment;
+package com.netro.troxrider.fragment.home;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -76,7 +76,7 @@ public class FragmentInternational extends Fragment {
                     State = documentSnapshot.getString("rider_state");
                     City = documentSnapshot.getString("rider_work_location");
 
-                    if (Status.equals("Cancelled")) {
+                    if (Status.equals("Approved")) {
                         loadData(Country, State, City);
                     }else {
 
@@ -94,10 +94,8 @@ public class FragmentInternational extends Fragment {
 
         localData = db.collection("orders");
 
-
         Query query = localData.whereEqualTo("order_status", "Approved").whereEqualTo("order_type","International").orderBy("timestamp", Query.Direction.ASCENDING);
 
-        
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(15)
                 .setPageSize(15)

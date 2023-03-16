@@ -20,7 +20,10 @@
         android:theme="@style/Theme.TroxRider"
         tools:targetApi="31">
         <activity
-            android:name=".AssignedActivity"
+            android:name=".activity.LocalDeliveryDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AssignedActivity"
             android:exported="false" />
         <activity
             android:name=".activity.EditProfileActivity"

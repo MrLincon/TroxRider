@@ -1,4 +1,4 @@
-package com.netro.troxrider.fragment;
+package com.netro.troxrider.fragment.assigned;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -20,7 +20,7 @@ import com.netro.troxrider.adapter.OrderDataAdapter;
 import com.netro.troxrider.util.LinearRecyclerDecoration;
 import com.netro.troxrider.util.Tools;
 
-public class FragmentDelivered extends Fragment {
+public class FragmentDeliveredAssigned extends Fragment {
 
     Dialog popup;
 
@@ -44,7 +44,7 @@ public class FragmentDelivered extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_delivered, container, false);
+        view = inflater.inflate(R.layout.fragment_delivered_assigned, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh);

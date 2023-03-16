@@ -1,4 +1,4 @@
-package com.netro.troxrider.fragment;
+package com.netro.troxrider.fragment.home;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.netro.troxrider.R;
+import com.netro.troxrider.activity.LocalDeliveryDetailsActivity;
 import com.netro.troxrider.adapter.OrderDataAdapter;
 import com.netro.troxrider.model.OrderData;
 import com.netro.troxrider.util.LinearRecyclerDecoration;
@@ -79,7 +80,7 @@ public class FragmentLocal extends Fragment {
                     State = documentSnapshot.getString("rider_state");
                     City = documentSnapshot.getString("rider_work_location");
 
-                    if (Status.equals("Cancelled")) {
+                    if (Status.equals("Approved")) {
                         loadData(Country, State, City);
                     }else {
 
@@ -126,14 +127,14 @@ public class FragmentLocal extends Fragment {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot) {
                 item_id = documentSnapshot.getId();
-//                OrderData orderData = documentSnapshot.toObject(OrderData.class);
-//                assert orderData != null;
-//                String status = orderData.getOrder_status();
-//
-//                Intent intent = new Intent(getContext(), TrackOrdersActivity.class);
-//                intent.putExtra("status", status);
-//                intent.putExtra("order_id", item_id);
-//                startActivity(intent);
+                OrderData orderData = documentSnapshot.toObject(OrderData.class);
+                assert orderData != null;
+                String status = orderData.getOrder_status();
+
+                Intent intent = new Intent(getContext(), LocalDeliveryDetailsActivity.class);
+                intent.putExtra("status", status);
+                intent.putExtra("order_id", item_id);
+                startActivity(intent);
 
             }
         });

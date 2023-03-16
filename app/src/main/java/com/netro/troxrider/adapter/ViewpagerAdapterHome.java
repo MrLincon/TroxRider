@@ -4,9 +4,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import com.netro.troxrider.fragment.FragmentInternational;
-import com.netro.troxrider.fragment.FragmentLocal;
-import com.netro.troxrider.fragment.FragmentLongDistance;
+import com.netro.troxrider.fragment.home.FragmentInternational;
+import com.netro.troxrider.fragment.home.FragmentLocal;
+import com.netro.troxrider.fragment.home.FragmentLongDistance;
 
 public class ViewpagerAdapterHome extends FragmentStatePagerAdapter {
 

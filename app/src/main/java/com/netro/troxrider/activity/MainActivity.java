@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                 switch (i){
                     case R.id.nav_home:
                         break;
-s
                     case R.id.nav_history:
                         startActivity(new Intent(MainActivity.this, HistoryActivity.class));
                         break;

@@ -1,4 +1,4 @@
-package com.netro.troxrider.fragment;
+package com.netro.troxrider.fragment.home;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -76,7 +76,7 @@ public class FragmentLongDistance extends Fragment {
                     State = documentSnapshot.getString("rider_state");
                     City = documentSnapshot.getString("rider_work_location");
 
-                    if (Status.equals("Cancelled")) {
+                    if (Status.equals("Approved")) {
                         loadData(Country, State, City);
                     }else {
 

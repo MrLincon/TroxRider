@@ -1,4 +1,4 @@
-package com.netro.troxrider.fragment;
+package com.netro.troxrider.fragment.history;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -9,25 +9,18 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.paging.PagedList;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.firebase.ui.firestore.paging.FirestorePagingOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.netro.troxrider.R;
 import com.netro.troxrider.adapter.OrderDataAdapter;
-import com.netro.troxrider.model.OrderData;
 import com.netro.troxrider.util.LinearRecyclerDecoration;
 import com.netro.troxrider.util.Tools;
 
-public class FragmentProcessing extends Fragment {
+public class FragmentPickedUpHistory extends Fragment {
 
     Dialog popup;
 
@@ -51,7 +44,7 @@ public class FragmentProcessing extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_processing, container, false);
+        view = inflater.inflate(R.layout.fragment_picked_up_history, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
