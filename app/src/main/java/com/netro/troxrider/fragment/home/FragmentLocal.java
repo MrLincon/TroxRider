@@ -46,7 +46,7 @@ public class FragmentLocal extends Fragment {
 
     String Country, State, City, Status;
 
-    private OrderDataAdapter adapter;
+    OrderDataAdapter adapter;
 
     Tools tools;
 

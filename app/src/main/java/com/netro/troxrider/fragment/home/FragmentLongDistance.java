@@ -1,6 +1,7 @@
 package com.netro.troxrider.fragment.home;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.netro.troxrider.R;
+import com.netro.troxrider.activity.LocalDeliveryDetailsActivity;
+import com.netro.troxrider.activity.LongIntDeliveryDetailsActivity;
 import com.netro.troxrider.adapter.OrderDataAdapter;
 import com.netro.troxrider.model.OrderData;
 import com.netro.troxrider.util.LinearRecyclerDecoration;
@@ -125,14 +128,14 @@ public class FragmentLongDistance extends Fragment {
             @Override
             public void onItemClick(DocumentSnapshot documentSnapshot) {
                 item_id = documentSnapshot.getId();
-//                OrderData orderData = documentSnapshot.toObject(OrderData.class);
-//                assert orderData != null;
-//                String status = orderData.getOrder_status();
-//
-//                Intent intent = new Intent(getContext(), TrackOrdersActivity.class);
-//                intent.putExtra("status", status);
-//                intent.putExtra("order_id", item_id);
-//                startActivity(intent);
+                OrderData orderData = documentSnapshot.toObject(OrderData.class);
+                assert orderData != null;
+                String status = orderData.getOrder_status();
+
+                Intent intent = new Intent(getContext(), LongIntDeliveryDetailsActivity.class);
+                intent.putExtra("status", status);
+                intent.putExtra("order_id", item_id);
+                startActivity(intent);
 
             }
         });

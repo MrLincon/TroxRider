@@ -1,10 +1,5 @@
 package com.netro.troxrider.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,10 +11,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,7 +28,7 @@ import com.netro.troxrider.util.Tools;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LocalDeliveryDetailsActivity extends AppCompatActivity {
+public class LongIntDeliveryDetailsActivity extends AppCompatActivity {
 
     ImageView back;
 
@@ -46,7 +45,7 @@ public class LocalDeliveryDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_local_delivery_details);
+        setContentView(R.layout.activity_long_int_delivery_details);
 
         back = findViewById(R.id.back);
         main = findViewById(R.id.main);
@@ -104,7 +103,7 @@ public class LocalDeliveryDetailsActivity extends AppCompatActivity {
         btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog popup = new Dialog(LocalDeliveryDetailsActivity.this);
+                Dialog popup = new Dialog(LongIntDeliveryDetailsActivity.this);
                 popup.setContentView(R.layout.popup_action);
                 popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 TextView message = popup.findViewById(R.id.message);
@@ -139,8 +138,8 @@ public class LocalDeliveryDetailsActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         popup.dismiss();
-                                        Toast.makeText(LocalDeliveryDetailsActivity.this, "Check your history to see the details", Toast.LENGTH_SHORT).show();
-                                        startActivity(new Intent(LocalDeliveryDetailsActivity.this,MainActivity.class));
+                                        Toast.makeText(LongIntDeliveryDetailsActivity.this, "Check your history to see the details", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(LongIntDeliveryDetailsActivity.this,MainActivity.class));
                                         finish();
                                     }
                                 });
