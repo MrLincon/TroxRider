@@ -314,9 +314,9 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()){
-                        String userType = documentSnapshot.getString("user_type");
+                        String riderName = documentSnapshot.getString("rider_name");
 
-                        if (userType.equals("")){
+                        if (riderName.equals("")){
                             startActivity(new Intent(LoginActivity.this, AccountSetupActivity.class));
                             finish();
                         }else {

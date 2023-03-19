@@ -196,4 +196,7 @@
     <string name="assigned">Assigned</string>
     <string name="accept">Accept</string>
     <string name="yes_confirm">Yes, Confirm</string>
+    <string name="start_pickup">Start Pickup</string>
+    <string name="destination">Destination</string>
+    <string name="call_now">Call Now</string>
 </resources>

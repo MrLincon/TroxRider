@@ -44,8 +44,8 @@ public class SplashActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                 if (documentSnapshot.exists()){
-                                    String userType = documentSnapshot.getString("user_type");
-                                    if (userType.equals("")){
+                                    String riderName = documentSnapshot.getString("rider_name");
+                                    if (riderName.equals("")){
                                         startActivity(new Intent(SplashActivity.this, AccountSetupActivity.class));
                                         finish();
                                     }else {

@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.netro.troxrider.R;
 import com.netro.troxrider.activity.LocalDeliveryDetailsActivity;
+import com.netro.troxrider.activity.ProcessingDetailsActivity;
 import com.netro.troxrider.adapter.OrderDataAdapter;
 import com.netro.troxrider.model.OrderData;
 import com.netro.troxrider.util.LinearRecyclerDecoration;
@@ -104,7 +105,7 @@ public class FragmentProcessingHistory extends Fragment {
                 assert orderData != null;
                 String status = orderData.getOrder_status();
 
-                Intent intent = new Intent(getContext(), LocalDeliveryDetailsActivity.class);
+                Intent intent = new Intent(getContext(), ProcessingDetailsActivity.class);
                 intent.putExtra("status", status);
                 intent.putExtra("order_id", item_id);
                 startActivity(intent);
