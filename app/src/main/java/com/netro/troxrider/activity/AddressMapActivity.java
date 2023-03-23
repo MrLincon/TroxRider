@@ -1,18 +1,19 @@
 package com.netro.troxrider.activity;
 
+import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.chaos.view.PinView;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,7 +36,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -43,7 +44,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.PolyUtil;
@@ -54,17 +59,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class AddressMapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -91,14 +87,17 @@ public class AddressMapActivity extends AppCompatActivity implements OnMapReadyC
 
     String order_id;
 
+    String mVerificationId;
+
     private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private static final int REQUEST_PHONE_CALL = 11;
     private boolean locationPermissionGranted;
 
     private static final String TAG = "AddressMapActivity";
 
     String data;
-
+Dialog popup;
     Tools tools;
 
     @Override
@@ -117,6 +116,7 @@ public class AddressMapActivity extends AppCompatActivity implements OnMapReadyC
         callNow = findViewById(R.id.call_now);
 
         tools = new Tools();
+        popup = new Dialog(this);
 
         order_id = getIntent().getStringExtra("order_id");
 
@@ -142,13 +142,33 @@ public class AddressMapActivity extends AppCompatActivity implements OnMapReadyC
                         String Contact = documentSnapshot.getString("sender_contact");
                         String Address = documentSnapshot.getString("sender_address");
 
-                        orderID.setText("Order ID: #"+order_id);
-                        senderName.setText("Sender: "+SenderName);
+                        orderID.setText("Order ID: #" + order_id);
+                        senderName.setText("Sender: " + SenderName);
                         contact.setText(Contact);
                         address.setText(Address);
                     }
                 });
 
+        callNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String contactNumber = contact.getText().toString();
+
+                if (ContextCompat.checkSelfPermission(AddressMapActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(AddressMapActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contactNumber));
+                    startActivity(intent);
+                }
+            }
+        });
+
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openBottomSheet();
+            }
+        });
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,29 +176,79 @@ public class AddressMapActivity extends AppCompatActivity implements OnMapReadyC
                 finish();
             }
         });
-
     }
 
+    private void sendVerificationCode(String phoneNumber) {
+        tools.loading(popup,true);
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                "+88" + phoneNumber,
+                60,
+                TimeUnit.SECONDS,
+                this,
+                new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                    @Override
+                    public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                        // Automatically verify the phone number if the code has been sent and auto-retrieved
+                        signInWithPhoneAuthCredential(phoneAuthCredential);
+                    }
+
+                    @Override
+                    public void onVerificationFailed(FirebaseException e) {
+                        tools.loading(popup,false);
+                        tools.makeSnack(main,"Something went wrong, try again!");
+                    }
+
+                    @Override
+                    public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                        // Save the verification ID and resending token so we can use them later
+                        mVerificationId = verificationId;
+//                        mResendToken = forceResendingToken;
+                    }
+                });
+    }
+
+    private void verifyVerificationCode(String code) {
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
+        signInWithPhoneAuthCredential(credential);
+    }
+
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        FirebaseAuth.getInstance().signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            tools.loading(popup,false);
+                            Toast.makeText(AddressMapActivity.this, "GG", Toast.LENGTH_SHORT).show();
+                            // Verification successful, do whatever action you had intended to take
+                        } else {
+                            tools.loading(popup,false);
+                            tools.makeSnack(main,"Verification failed!");
+                        }
+                    }
+                });
+    }
 
     private void openBottomSheet() {
+
+        sendVerificationCode(contact.getText().toString());
+
         BottomSheetDialog mBottomSheetDialog = new BottomSheetDialog(AddressMapActivity.this);
-        View sheetView = getLayoutInflater().inflate(R.layout.bottomsheet_address_map, null);
+        View sheetView = getLayoutInflater().inflate(R.layout.bottomsheet_addres_otp_varification, null);
         mBottomSheetDialog.setContentView(sheetView);
         mBottomSheetDialog.show();
-        mBottomSheetDialog.setCancelable(false);
+//        mBottomSheetDialog.setCancelable(false);
 
-        TextView orderID = mBottomSheetDialog.findViewById(R.id.order_id);
-        TextView senderName = mBottomSheetDialog.findViewById(R.id.sender_name);
-        TextView contact = mBottomSheetDialog.findViewById(R.id.contact);
-        TextView address = mBottomSheetDialog.findViewById(R.id.address);
+
         CardView btnContinue = mBottomSheetDialog.findViewById(R.id.btn_continue);
-        TextView callNow = mBottomSheetDialog.findViewById(R.id.call_now);
+        PinView otp = mBottomSheetDialog.findViewById(R.id.otp);
 
 
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                verifyVerificationCode(otp.getText().toString());
+                mBottomSheetDialog.dismiss();
             }
         });
 

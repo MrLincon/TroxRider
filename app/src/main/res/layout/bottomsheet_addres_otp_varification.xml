@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:fontFamily="@font/ubuntu_medium"
+        android:gravity="center"
+        android:text="Enter the OTP shared from receiver’s phone to confirm the delivery"
+        android:textColor="@color/colorBlackMidEmp"
+        android:textSize="14sp"></TextView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:fontFamily="@font/ubuntu_medium"
+        android:gravity="center"
+        android:text="NOTE- Remember to receive the fees before you confirm"
+        android:textColor="@color/colorStatusAlert"
+        android:textSize="14sp"></TextView>
+
+    <com.chaos.view.PinView
+        android:id="@+id/otp"
+        style="@style/PinWidget.PinView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:cursorVisible="true"
+        android:hint="------"
+        android:layout_marginTop="16dp"
+        android:inputType="number"
+        android:layout_gravity="center"
+        android:padding="16dp"
+        android:textColor="@color/colorBlackMidEmp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:cursorColor="@color/colorPrimary"
+        app:cursorWidth="2dp"
+        app:itemCount="6"
+        app:itemHeight="48dp"
+        app:itemRadius="4dp"
+        app:itemSpacing="8dp"
+        app:itemWidth="48dp"
+        app:lineColor="@color/colorPrimary"
+        app:lineWidth="1dp"
+        app:viewType="rectangle" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/btn_continue"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="24dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/action_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/ubuntu_medium"
+            android:text="@string/confirm"
+            android:textColor="@color/colorWhiteHighEmp"
+            android:textSize="16sp"></TextView>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+</LinearLayout>
+

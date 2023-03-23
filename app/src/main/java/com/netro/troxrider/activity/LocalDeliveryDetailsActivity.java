@@ -86,7 +86,6 @@ public class LocalDeliveryDetailsActivity extends AppCompatActivity {
                             Long Price = documentSnapshot.getLong("price");
                             String OrdeID = documentSnapshot.getString("order_id");
 
-
                             senderName.setText(SenderName);
                             senderContact.setText(SenderContact);
                             senderAddress.setText(SenderAddress);
