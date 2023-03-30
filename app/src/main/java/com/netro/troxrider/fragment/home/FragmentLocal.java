@@ -99,7 +99,8 @@ public class FragmentLocal extends Fragment {
         localData = db.collection("orders");
 
 
-        Query query = localData.whereEqualTo("order_status", "Approved").whereEqualTo("sender_city",city).orderBy("timestamp", Query.Direction.ASCENDING);
+        Query query = localData.whereEqualTo("order_status", "Processing")
+                .whereEqualTo("assigned",false).whereEqualTo("sender_city",city).orderBy("timestamp", Query.Direction.ASCENDING);
 
         PagedList.Config config = new PagedList.Config.Builder()
                 .setInitialLoadSizeHint(15)

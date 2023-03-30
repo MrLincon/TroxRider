@@ -15,11 +15,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.netro.troxrider.R;
 import com.netro.troxrider.util.Tools;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProcessingDetailsActivity extends AppCompatActivity {
 
@@ -29,7 +34,7 @@ public class ProcessingDetailsActivity extends AppCompatActivity {
 
     CardView btnStartPickup;
 
-    TextView senderName, senderContact, senderAddress, receiverName, receiverContact, receiverAddress, parcelWeight, parcelPrice, orderID;
+    TextView senderName, senderContact, senderAddress, receiverName, receiverContact, receiverAddress, parcelWeight, parcelPrice, orderID, deliveryFee;
 
     String data, order_id;
 
@@ -57,6 +62,7 @@ public class ProcessingDetailsActivity extends AppCompatActivity {
         parcelPrice = findViewById(R.id.parcel_price);
         orderID = findViewById(R.id.order_id_text);
         btnStartPickup = findViewById(R.id.btn_start_pickup);
+        deliveryFee = findViewById(R.id.delivery_fee);
 
         tools = new Tools();
 
@@ -81,8 +87,10 @@ public class ProcessingDetailsActivity extends AppCompatActivity {
                             String ReceiverAddress = documentSnapshot.getString("receiver_address");
                             long ParcelWeight = documentSnapshot.getLong("parcel_weight");
                             Long Price = documentSnapshot.getLong("price");
+                            Long TotalPrice = documentSnapshot.getLong("total_price");
                             String OrdeID = documentSnapshot.getString("order_id");
 
+                            Long DeliveryFee = TotalPrice-Price;
 
                             senderName.setText(SenderName);
                             senderContact.setText(SenderContact);
@@ -93,6 +101,8 @@ public class ProcessingDetailsActivity extends AppCompatActivity {
                             parcelWeight.setText(ParcelWeight+" KG");
                             parcelPrice.setText("$"+Price);
                             orderID.setText(OrdeID);
+
+                            deliveryFee.setText("$"+DeliveryFee);
                         }
                     }
                 });
@@ -122,7 +132,7 @@ public class ProcessingDetailsActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             popup.dismiss();
-                            Intent intent = new Intent(ProcessingDetailsActivity.this,AddressMapActivity.class);
+                            Intent intent = new Intent(ProcessingDetailsActivity.this, MapActivityPickedUp.class);
                             intent.putExtra("order_id",order_id);
                             startActivity(intent);
                         }

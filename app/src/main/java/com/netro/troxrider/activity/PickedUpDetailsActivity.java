@@ -1,26 +1,23 @@
 package com.netro.troxrider.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.netro.troxrider.R;
@@ -29,13 +26,13 @@ import com.netro.troxrider.util.Tools;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LocalDeliveryDetailsActivity extends AppCompatActivity {
+public class PickedUpDetailsActivity extends AppCompatActivity {
 
     ImageView back;
 
     CoordinatorLayout main;
 
-    CardView btnAccept;
+    CardView btnStartPickup, btnDropToWarehouse;
 
     TextView senderName, senderContact, senderAddress, receiverName, receiverContact, receiverAddress, parcelWeight, parcelPrice, orderID, deliveryFee;
 
@@ -43,10 +40,15 @@ public class LocalDeliveryDetailsActivity extends AppCompatActivity {
 
     Tools tools;
 
+
+    private static final int REQUEST_CODE = 1011;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    private boolean locationPermissionGranted;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_local_delivery_details);
+        setContentView(R.layout.activity_pickedup_details);
 
         back = findViewById(R.id.back);
         main = findViewById(R.id.main);
@@ -59,8 +61,9 @@ public class LocalDeliveryDetailsActivity extends AppCompatActivity {
         parcelWeight = findViewById(R.id.parcel_weight);
         parcelPrice = findViewById(R.id.parcel_price);
         orderID = findViewById(R.id.order_id_text);
-        btnAccept = findViewById(R.id.btn_accept);
+        btnStartPickup = findViewById(R.id.btn_start_pickup);
         deliveryFee = findViewById(R.id.delivery_fee);
+        btnDropToWarehouse = findViewById(R.id.btn_warehouse);
 
         tools = new Tools();
 
@@ -76,7 +79,7 @@ public class LocalDeliveryDetailsActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        if (documentSnapshot.exists()) {
+                        if (documentSnapshot.exists()){
                             String SenderName = documentSnapshot.getString("sender_name");
                             String SenderContact = documentSnapshot.getString("sender_contact");
                             String SenderAddress = documentSnapshot.getString("sender_address");
@@ -96,78 +99,91 @@ public class LocalDeliveryDetailsActivity extends AppCompatActivity {
                             receiverName.setText(ReceiverName);
                             receiverContact.setText(ReceiverContact);
                             receiverAddress.setText(ReceiverAddress);
-                            parcelWeight.setText(ParcelWeight + " KG");
-                            parcelPrice.setText("$" + Price);
+                            parcelWeight.setText(ParcelWeight+" KG");
+                            parcelPrice.setText("$"+Price);
                             orderID.setText(OrdeID);
+
                             deliveryFee.setText("$"+DeliveryFee);
                         }
                     }
                 });
 
-
-        btnAccept.setOnClickListener(new View.OnClickListener() {
+        btnDropToWarehouse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog popup = new Dialog(LocalDeliveryDetailsActivity.this);
-                popup.setContentView(R.layout.popup_action);
+
+                Dialog popup = new Dialog(PickedUpDetailsActivity.this);
+                popup.setContentView(R.layout.popup_confirm);
                 popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 TextView message = popup.findViewById(R.id.message);
-                CardView btnAccept = popup.findViewById(R.id.btn_accept);
-                LinearLayout btnCancel = popup.findViewById(R.id.btn_cancel);
+                TextView actionText = popup.findViewById(R.id.action_text);
+                CardView btnContinue = popup.findViewById(R.id.btn_continue);
                 popup.show();
                 popup.setCancelable(false);
 
-                message.setText("You are about to accept the delivery order. Make sure you have read the description.");
+                message.setText("You dropped the package to warehouse?");
+                actionText.setText(getResources().getString(R.string.continue_));
 
-                btnCancel.setOnClickListener(new View.OnClickListener() {
+                btnContinue.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        popup.dismiss();
-                    }
-                });
+                        Map<String, Object> userMap = new HashMap<>();
 
-                btnAccept.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                        userMap.put("order_status", "WareHouse");
+                        userMap.put("delivery_status", "WareHouse");
 
-                        btnAccept.setFocusable(false);
-
-                        FirebaseFirestore.getInstance().collection("riderDetails").document(FirebaseAuth.getInstance().getUid())
-                                .get()
-                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        FirebaseFirestore.getInstance().collection("orders").document(order_id)
+                                .update(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        if (documentSnapshot.exists()) {
-                                            String name = documentSnapshot.getString("rider_name");
-                                            String contact = documentSnapshot.getString("rider_contact");
-
-
-                                            Map<String, Object> userMap = new HashMap<>();
-
-                                            userMap.put("assigned_rider_id", FirebaseAuth.getInstance().getUid());
-                                            userMap.put("delivery_status", "Picking Up");
-                                            userMap.put("order_status", "Processing");
-                                            userMap.put("deliveryman_name", name);
-                                            userMap.put("deliveryman_contact", contact);
-                                            userMap.put("assigned", true);
-
-                                            FirebaseFirestore.getInstance().collection("orders").document(order_id)
-                                                    .update(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            popup.dismiss();
-                                                            Toast.makeText(LocalDeliveryDetailsActivity.this, "Check your history to see the details", Toast.LENGTH_SHORT).show();
-                                                            startActivity(new Intent(LocalDeliveryDetailsActivity.this, MainActivity.class));
-                                                            finish();
-                                                        }
-                                                    });
-                                        }
+                                    public void onSuccess(Void unused) {
+                                        startActivity(new Intent(PickedUpDetailsActivity.this, MainActivity.class));
+                                        Toast.makeText(PickedUpDetailsActivity.this, "Order picked up", Toast.LENGTH_SHORT).show();
+                                        finish();
                                     }
                                 });
-
-
                     }
                 });
+
+
+            }
+        });
+
+        btnStartPickup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(PickedUpDetailsActivity.this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    locationPermissionGranted = true;
+
+
+                    Dialog popup = new Dialog(PickedUpDetailsActivity.this);
+                    popup.setContentView(R.layout.popup_confirm);
+                    popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    TextView message = popup.findViewById(R.id.message);
+                    TextView actionText = popup.findViewById(R.id.action_text);
+                    CardView btnContinue = popup.findViewById(R.id.btn_continue);
+                    popup.show();
+                    popup.setCancelable(false);
+
+                    message.setText("You are about to start delivery process");
+                    actionText.setText(getResources().getString(R.string.continue_));
+
+                    btnContinue.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            popup.dismiss();
+                            Intent intent = new Intent(PickedUpDetailsActivity.this, MapActivityProcessing.class);
+                            intent.putExtra("order_id",order_id);
+                            startActivity(intent);
+                        }
+                    });
+
+                } else {
+                    ActivityCompat.requestPermissions(PickedUpDetailsActivity.this,
+                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                }
 
             }
         });
@@ -180,4 +196,6 @@ public class LocalDeliveryDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

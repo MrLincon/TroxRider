@@ -259,7 +259,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     userMap.put("rider_email", email);
                                     userMap.put("rider_id", userID);
-                                    userMap.put("user_type", "");
+                                    userMap.put("rider_name", "");
 
                                     if (documentSnapshot.exists()) {
 

@@ -459,6 +459,31 @@
     </ScrollView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/btn_warehouse"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="106dp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="60dp"
+        android:layout_gravity="bottom">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/ubuntu_medium"
+            android:text="Drop to Warehouse"
+            android:textColor="@color/colorWhiteHighEmp"
+            android:textSize="16sp" />
+
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
         android:id="@+id/btn_start_pickup"
         android:layout_width="match_parent"
         android:layout_height="52dp"
@@ -476,7 +501,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/ubuntu_medium"
-            android:text="@string/start_pickup"
+            android:text="@string/start_delivery"
             android:textColor="@color/colorWhiteHighEmp"
             android:textSize="16sp" />
 

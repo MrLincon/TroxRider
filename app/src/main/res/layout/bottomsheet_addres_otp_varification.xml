@@ -15,7 +15,7 @@
         android:layout_marginLeft="16dp"
         android:fontFamily="@font/ubuntu_medium"
         android:gravity="center"
-        android:text="Enter the OTP shared from receiver’s phone to confirm the delivery"
+        android:text="Enter the pickup code form receiver’s account to confirm the delivery"
         android:textColor="@color/colorBlackMidEmp"
         android:textSize="14sp"></TextView>
 
@@ -37,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:cursorVisible="true"
-        android:hint="------"
+        android:hint="----"
         android:layout_marginTop="16dp"
         android:inputType="number"
         android:layout_gravity="center"
@@ -47,7 +47,7 @@
         android:textStyle="bold"
         app:cursorColor="@color/colorPrimary"
         app:cursorWidth="2dp"
-        app:itemCount="6"
+        app:itemCount="4"
         app:itemHeight="48dp"
         app:itemRadius="4dp"
         app:itemSpacing="8dp"

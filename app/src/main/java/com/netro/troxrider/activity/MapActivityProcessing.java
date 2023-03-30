@@ -8,6 +8,8 @@ import android.location.Address;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -44,11 +46,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.android.PolyUtil;
@@ -59,10 +56,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
-public class AddressMapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivityProcessing extends AppCompatActivity implements OnMapReadyCallback {
 
     CoordinatorLayout main;
     ImageView back;
@@ -97,7 +95,7 @@ public class AddressMapActivity extends AppCompatActivity implements OnMapReadyC
     private static final String TAG = "AddressMapActivity";
 
     String data;
-Dialog popup;
+    Dialog popup;
     Tools tools;
 
     @Override
@@ -120,7 +118,7 @@ Dialog popup;
 
         order_id = getIntent().getStringExtra("order_id");
 
-        AddressMapActivity.this.getWindow().setFlags(
+        MapActivityProcessing.this.getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         );
@@ -129,7 +127,7 @@ Dialog popup;
 
         SupportMapFragment mapFragment = (SupportMapFragment) this.getSupportFragmentManager().findFragmentById(R.id.map);
 
-        mapFragment.getMapAsync(AddressMapActivity.this);
+        mapFragment.getMapAsync(MapActivityProcessing.this);
 
         tools.logMessage(TAG, "Activity");
         tools.setLightStatusBar(main, this);
@@ -154,8 +152,8 @@ Dialog popup;
             public void onClick(View v) {
                 String contactNumber = contact.getText().toString();
 
-                if (ContextCompat.checkSelfPermission(AddressMapActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(AddressMapActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+                if (ContextCompat.checkSelfPermission(MapActivityProcessing.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MapActivityProcessing.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
                 } else {
                     Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + contactNumber));
                     startActivity(intent);
@@ -178,62 +176,10 @@ Dialog popup;
         });
     }
 
-    private void sendVerificationCode(String phoneNumber) {
-        tools.loading(popup,true);
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                "+88" + phoneNumber,
-                60,
-                TimeUnit.SECONDS,
-                this,
-                new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                    @Override
-                    public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-                        // Automatically verify the phone number if the code has been sent and auto-retrieved
-                        signInWithPhoneAuthCredential(phoneAuthCredential);
-                    }
-
-                    @Override
-                    public void onVerificationFailed(FirebaseException e) {
-                        tools.loading(popup,false);
-                        tools.makeSnack(main,"Something went wrong, try again!");
-                    }
-
-                    @Override
-                    public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                        // Save the verification ID and resending token so we can use them later
-                        mVerificationId = verificationId;
-//                        mResendToken = forceResendingToken;
-                    }
-                });
-    }
-
-    private void verifyVerificationCode(String code) {
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(mVerificationId, code);
-        signInWithPhoneAuthCredential(credential);
-    }
-
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        FirebaseAuth.getInstance().signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            tools.loading(popup,false);
-                            Toast.makeText(AddressMapActivity.this, "GG", Toast.LENGTH_SHORT).show();
-                            // Verification successful, do whatever action you had intended to take
-                        } else {
-                            tools.loading(popup,false);
-                            tools.makeSnack(main,"Verification failed!");
-                        }
-                    }
-                });
-    }
 
     private void openBottomSheet() {
 
-        sendVerificationCode(contact.getText().toString());
-
-        BottomSheetDialog mBottomSheetDialog = new BottomSheetDialog(AddressMapActivity.this);
+        BottomSheetDialog mBottomSheetDialog = new BottomSheetDialog(MapActivityProcessing.this);
         View sheetView = getLayoutInflater().inflate(R.layout.bottomsheet_addres_otp_varification, null);
         mBottomSheetDialog.setContentView(sheetView);
         mBottomSheetDialog.show();
@@ -243,14 +189,87 @@ Dialog popup;
         CardView btnContinue = mBottomSheetDialog.findViewById(R.id.btn_continue);
         PinView otp = mBottomSheetDialog.findViewById(R.id.otp);
 
-
-        btnContinue.setOnClickListener(new View.OnClickListener() {
+        otp.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                verifyVerificationCode(otp.getText().toString());
-                mBottomSheetDialog.dismiss();
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "onTextChanged: "+s);
+                String otpValue = s.toString();
+                long value = Long.parseLong(otpValue);
+                btnContinue.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FirebaseFirestore.getInstance().collection("orders").document(order_id)
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if (documentSnapshot.exists()) {
+                                        Long pickupCode = documentSnapshot.getLong("pickupCode");
+                                        if (pickupCode==value){
+
+                                            Map<String, Object> userMap = new HashMap<>();
+
+                                            userMap.put("order_status", "Picked Up");
+                                            userMap.put("delivery_status", "Picked Up");
+
+                                            FirebaseFirestore.getInstance().collection("orders").document(order_id)
+                                                            .update(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
+                                                            startActivity(new Intent(MapActivityProcessing.this,MainActivity.class));
+                                                            Toast.makeText(MapActivityProcessing.this, "Order picked up", Toast.LENGTH_SHORT).show();
+                                                            finish();
+                                                        }
+                                                    });
+                                        }else {
+                                            tools.makeSnack(main,"Code is not correct");
+                                        }
+                                    }
+                                }
+                            });
+                    mBottomSheetDialog.dismiss();
+                }
+            });
             }
         });
+
+//        if (!otpValue.equals("")){
+//            btnContinue.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    FirebaseFirestore.getInstance().collection("orders").document(order_id)
+//                            .get()
+//                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                                @Override
+//                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                                    if (documentSnapshot.exists()) {
+//                                        Long pickupCode = documentSnapshot.getLong("pickupCode");
+//                                        if (pickupCode==value){
+//                                            Toast.makeText(AddressMapActivity.this, "GG", Toast.LENGTH_SHORT).show();
+//                                        }else {
+//                                            tools.makeSnack(main,"Code is not correct");
+//                                        }
+//                                    }
+//                                }
+//                            });
+//                    mBottomSheetDialog.dismiss();
+//                }
+//            });
+//        }else {
+//            tools.makeSnack(main,"Enter code first");
+//        }
+
+
 
     }
 
